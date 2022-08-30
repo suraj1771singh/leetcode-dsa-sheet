@@ -1,33 +1,64 @@
+
+import java.util.*;
+
 class Solution {
-    int count;
 
     public int orangesRotting(int[][] grid) {
         int n = grid.length;
-        boolean flag = false;
         int m = grid[0].length;
+        boolean visited[][] = new boolean[n][m];
+        Queue<int[]> q = new LinkedList<>();
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                if (grid[i][j] == 1 && flag)
-                    return -1;
                 if (grid[i][j] == 2) {
-                    flag = true;
-                    DFS(i, j, n, m, grid);
+                    visited[i][j] = true;
+                    q.add(new int[] { i, j });
                 }
             }
         }
-        return count;
+        // now doing BFS
+        int[][] dirs = new int[][] { { 0, 1 }, { 1, 0 }, { -1, 0 }, { 0, -1 } };
+        int cnt = 0;
+        while (!q.isEmpty()) {
+            int size = q.size();
+            while (size-- > 0) {
+                int a[] = q.poll();
+                for (int dir[] : dirs) {
+                    int x = a[0] + dir[0];
+                    int y = a[1] + dir[1];
+                    if (isValid(x, y, grid, visited)) {
+                        grid[x][y] = 2;
+                        visited[x][y] = true;
+                        q.add(new int[] { x, y });
+                    }
+                }
+
+            }
+            cnt++;
+
+        }
+        // checking if there any fresh orange left or not
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 1) {
+                    return -1;
+                }
+            }
+        }
+        return cnt != 0 ? cnt - 1 : 0;
+
     }
 
-    private void DFS(int i, int j, int n, int m, int[][] grid) {
-        if (i < 0 || j < 0 || i >= n || j >= m)
-            return;
-        if (grid[i][j] == 0 || grid[i][j] == 3)
-            return;
-        grid[i][j] = 3;
-        count++;
-        DFS(i + 1, j, n, m, grid);
-        DFS(i - 1, j, n, m, grid);
-        DFS(i, j + 1, n, m, grid);
-        DFS(i, j - 1, n, m, grid);
+    private boolean isValid(int x, int y, int[][] grid, boolean[][] visited) {
+        int n = grid.length;
+        int m = grid[0].length;
+        if (x < 0 || y < 0 || x >= n || y >= m)
+            return false;
+        if (grid[x][y] != 1)
+            return false;
+        if (visited[x][y])
+            return false;
+        return true;
     }
+
 }
