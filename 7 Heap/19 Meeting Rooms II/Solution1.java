@@ -19,8 +19,8 @@ class Interval {
     }
 }
 
-public class Solution1 {
-    public int minMeetingRooms(List<Interval> intervals) {
+ class Main {
+    public int getMinRooms(List<Interval> intervals) {
         Collections.sort(intervals, (a, b) -> a.start - b.start);
         TreeSet<Integer> availRoom = new TreeSet<>();
         PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[0] - b[0]);
