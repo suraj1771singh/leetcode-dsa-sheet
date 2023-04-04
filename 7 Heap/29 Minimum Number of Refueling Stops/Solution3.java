@@ -1,19 +1,23 @@
-import java.util.*;
+//find maximum distance you can cover after taking exactly k stops, if can't take k stops return -1
+// (Not working)
+class Solution {
+    public int minRefuelStops(int target, int startFuel, int[][] stations) {
+        int n = stations.length;
+        Integer dp[][] = new Integer[n][n];
 
-public class Solution3 {
-    class Solution {
-        public int minRefuelStops(int target, int cur, int[][] s) {
-            Queue<Integer> pq = new PriorityQueue<>();
-            int i = 0, res;
-            for (res = 0; cur < target; res++) {
-                while (i < s.length && s[i][0] <= cur)
-                    pq.offer(-s[i++][1]);
-                if (pq.isEmpty())
-                    return -1;
-                cur += -pq.poll();
-            }
-            return res;
-        }
+        return f(n, 0, startFuel, stations, dp);
+    }
+
+    int f(int k, int ind, int startFuel, int[][] stations, Integer[][] dp) {
+        if (k <= 0)
+            return startFuel;
+        if (ind >= stations.length)
+            return -(int) 1e9;
+        if (dp[ind][k] != null)
+            return dp[ind][k];
+
+        int p = stations[ind][1] + f(ind + 1, k - 1, startFuel, stations, dp);
+        int np = f(ind + 1, k, startFuel, stations, dp);
+        return dp[ind][k] = Math.max(p, np);
     }
 }
-// Time complexity : O(n*logn)

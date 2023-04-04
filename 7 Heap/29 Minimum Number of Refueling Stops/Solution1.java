@@ -1,36 +1,29 @@
-import java.util.HashMap;
+import java.util.*;
 
-//-------------------------RECURSIVE SOLUTION
+//-------------------------RECURSIVE SOLUTION ( TLE )
 class Solution {
     public int minRefuelStops(int target, int startFuel, int[][] stations) {
-        HashMap<Integer,HashMap<Integer,Integer> > map= new HashMap<>();
-
-        int ans = f(target, 0, startFuel, stations,map);
-        return ans < 0 ? -1 : ans;
+        Map<String, Integer> dp = new HashMap<>();
+        int ans = f(0, 0, startFuel, stations, target, dp);
+        return ans == (int) 1e9 ? -1 : ans;
 
     }
 
-    private int f(int target, int i, int startFuel, int[][] stations, HashMap<Integer,HashMap<Integer,Integer> > map) {
-        if (i == stations.length) {
-            if (startFuel >= target)
-                return 0;
-            else
-                return -1;
+    int f(int last, int ind, int fuel, int[][] stations, int target, Map<String, Integer> dp) {
+        if (last + fuel >= target)
+            return 0;
+        if (ind >= stations.length)
+            return (int) 1e9;
+        String s = last + "-" + ind + "-" + fuel;
+        if (dp.containsKey(s))
+            return dp.get(s);
+        if (stations[ind][0] - last <= fuel) {
+            fuel -= stations[ind][0] - last;
+            int p = 1 + f(stations[ind][0], ind + 1, fuel + stations[ind][1], stations, target, dp);
+            int np = f(stations[ind][0], ind + 1, fuel, stations, target, dp);
+            dp.put(s, Math.min(p, np));
+            return dp.get(s);
         }
-        
-        if (startFuel < stations[i][0])
-            return -1;
-        if(map.containsKey(startFuel) && map.get(startFuel).containsKey(i)) return map.get(startFuel).get(i);
-
-        int pick = 1+ f(target, i + 1, startFuel + stations[i][1], stations,map);
-        int notpick = f(target, i + 1, startFuel, stations,map);
-        int count=0;
-        if(pick==0 && notpick==-1)  count= -1;
-        else if(pick==0) count= notpick;
-        else if(notpick==-1) count= pick;
-        else count=  Math.min(pick, notpick); 
-        map.put(startFuel, new HashMap<>());
-        map.get(startFuel).put(i, count);
-        return count;
+        return (int) 1e9;
     }
 }

@@ -1,0 +1,36 @@
+import java.util.*;
+
+
+    class Solution {
+        public int minRefuelStops(int target, int cur, int[][] s) {
+            Queue<Integer> pq = new PriorityQueue<>();
+            int i = 0, res;
+            for (res = 0; cur < target; res++) {
+                while (i < s.length && s[i][0] <= cur)
+                    pq.offer(-s[i++][1]);
+                if (pq.isEmpty())
+                    return -1;
+                cur += -pq.poll();
+            }
+            return res;
+        }
+        
+        //my understaning function 
+        int minRefuelStops2(int target, int startFuel, int[][] stations) {
+            PriorityQueue<Integer> pq = new PriorityQueue<>((a, b) -> b - a);
+            int res = 0, dist = startFuel, ind = 0;
+            while (true) {
+                if (dist >= target)
+                    return res;
+                while (ind < stations.length && dist < stations[ind][0])
+                    pq.add(stations[ind++][1]);
+    
+                if (pq.isEmpty())
+                    return -1;
+                dist += pq.poll();
+            }
+    
+        }
+    }
+
+// Time complexity : O(n*logn)
